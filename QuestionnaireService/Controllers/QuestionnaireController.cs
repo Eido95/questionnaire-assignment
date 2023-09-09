@@ -77,6 +77,91 @@ public class QuestionnaireController : ControllerBase
             Text = "12+",
             Score = 90
         });
+        
+        var question2 = new Question
+        {
+            Text = "What is a Tuna?",
+            Questionnaire = questionnaire
+        };
+        
+        _context.Questions.Add(question2);
+        
+        _context.Answers.Add(new Answer
+        {
+            Question = question2,
+            Text = "A bird",
+            Score = 0
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question2,
+            Text = "A fish",
+            Score = 50
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question2,
+            Text = "A saltwater fish",
+            Score = 90
+        });
+
+        var respondent1 = new Respondent
+        {
+            Name = "Eido"
+        };
+
+        _context.Respondents.Add(respondent1);
+        
+        _context.RespondentsAnswers.Add(new RespondentAnswer
+        {
+            Respondent = respondent1,
+            Question = question1,
+            Answer = question1.Answers.ToList()[0]
+        });
+        
+        _context.RespondentsAnswers.Add(new RespondentAnswer
+        {
+            Respondent = respondent1,
+            Question = question2,
+            Answer = question2.Answers.ToList()[0]
+        });
+        
+        var respondent2 = new Respondent
+        {
+            Name = "Eve"
+        };
+
+        _context.Respondents.Add(respondent2);
+        
+        _context.RespondentsAnswers.Add(new RespondentAnswer
+        {
+            Respondent = respondent2,
+            Question = question1,
+            Answer = question1.Answers.ToList()[1]
+        });
+        
+        _context.RespondentsAnswers.Add(new RespondentAnswer
+        {
+            Respondent = respondent2,
+            Question = question1,
+            Answer = question1.Answers.ToList()[2]
+        });
+        
+        _context.RespondentsAnswers.Add(new RespondentAnswer
+        {
+            Respondent = respondent2,
+            Question = question2,
+            Answer = question2.Answers.ToList()[1]
+        });
+        
+        _context.RespondentsAnswers.Add(new RespondentAnswer
+        {
+            Respondent = respondent2,
+            Question = question2,
+            Answer = question2.Answers.ToList()[2]
+        });
             
         _context.SaveChanges();
     }

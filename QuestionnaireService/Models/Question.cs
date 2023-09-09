@@ -7,4 +7,5 @@ public class Question
     public string? Comment { get; set; }
     public virtual ICollection<Answer>? Answers { get; set; }
     public virtual Questionnaire? Questionnaire { get; set; }
+    public ICollection<RespondentAnswer>? RespondentAnswers { get; set; }
 }

@@ -1,10 +1,8 @@
 namespace QuestionnaireService.Models;
 
-public class Answer
+public class Respondent
 {
     public int? Id { get; set; }
-    public string? Text { get; set; }
-    public int? Score { get; set; }
-    public virtual Question? Question { get; set; }
+    public string? Name { get; set; }
     public ICollection<RespondentAnswer>? RespondentAnswers { get; set; }
 }
