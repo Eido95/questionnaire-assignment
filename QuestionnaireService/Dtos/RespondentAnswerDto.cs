@@ -9,6 +9,7 @@ public class RespondentAnswerDto
     public int? QuestionId { get; set; }
     public int? AnswerId { get; set; }
 
+    public RespondentAnswerDto() {}
     public RespondentAnswerDto(RespondentAnswer respondentAnswer)
     {
         Id = respondentAnswer.Id;
