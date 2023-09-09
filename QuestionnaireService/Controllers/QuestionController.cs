@@ -26,46 +26,4 @@ public class QuestionController : ControllerBase
             .Select(question => new QuestionDto(question))
             .ToList();
     }
-    
-        [HttpPost]
-    public void PostQuestionnaire()
-    {
-        SeedData();
-    }
-    
-    private void SeedData()
-    {
-        // Creates the database if not exists
-        _context.Database.EnsureCreated();
-
-        var question1 = new Question
-        {
-            Text = "password policy – pass length:",
-            Comment = "I'm a comment!",
-        };
-        _context.Questions.Add(question1);
-        
-        _context.Answers.Add(new Answer
-        {
-            Question = question1,
-            Text = "4",
-            Score = 0
-        });
-            
-        _context.Answers.Add(new Answer
-        {
-            Question = question1,
-            Text = "6-8",
-            Score = 50
-        });
-            
-        _context.Answers.Add(new Answer
-        {
-            Question = question1,
-            Text = "12+",
-            Score = 90
-        });
-            
-        _context.SaveChanges();
-    }
 }
