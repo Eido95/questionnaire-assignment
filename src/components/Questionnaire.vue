@@ -2,6 +2,12 @@
   <v-container fluid>
     <v-row justify="center">
       <v-col cols="12" sm="8" md="6">
+        <v-img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png"
+          class="my-3"
+          contain
+          height="100"
+        />
         <v-card class="mx-auto mt-10" max-width="540">
           <v-card-title class="text-h2">Questionnaire</v-card-title>
           <v-card-subtitle class="text-h6">{{
