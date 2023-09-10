@@ -9,6 +9,7 @@ public class QuestionDto
     public string? Comment { get; set; }
     public virtual ICollection<AnswerDto>? Answers { get; set; }
 
+    public QuestionDto() { }
     public QuestionDto(Question question)
     {
         Id = question.Id;

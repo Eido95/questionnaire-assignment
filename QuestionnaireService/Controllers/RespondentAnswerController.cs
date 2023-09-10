@@ -29,30 +29,4 @@ public class RespondentAnswerController : ControllerBase
             .Select(respondentAnswer => new RespondentAnswerDto(respondentAnswer))
             .ToList();
     }
-
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<RespondentAnswerDto> GetRespondentAnswers(RespondentAnswerDto respondentAnswerDto)
-    {
-        var respondent = _context.Respondents.Find(respondentAnswerDto.RespondentId);
-        var question = _context.Questions.Find(respondentAnswerDto.QuestionId);
-        var answer = _context.Answers.Find(respondentAnswerDto.AnswerId);
-
-        if (respondent == null || question == null || answer == null)
-        {
-            return NotFound();
-        }
-        
-        _context.RespondentsAnswers.Add(new RespondentAnswer
-        {
-            Respondent = respondent,
-            Question = question,
-            Answer = answer
-        });
-
-        _context.SaveChanges();
-
-        return Ok();
-    }
 }
