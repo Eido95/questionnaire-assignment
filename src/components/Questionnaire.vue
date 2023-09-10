@@ -7,8 +7,8 @@
           <v-card-subtitle class="text-h6">Eido</v-card-subtitle>
           <v-card-text>
             <v-card
-              v-for="(question, index) in questions"
-              :key="index"
+              v-for="(question, questionIndex) in questions"
+              :key="questionIndex"
               class="mb-4"
             >
               <v-card-title class="text-subtitle-1">{{
@@ -16,12 +16,12 @@
               }}</v-card-title>
               <v-list>
                 <v-list-item
-                  v-for="(answer, aIndex) in question.answers"
-                  :key="aIndex"
+                  v-for="(answer, answerIndex) in question.answers"
+                  :key="answerIndex"
                 >
                   <v-list-item-action>
                     <v-checkbox
-                      v-model="responses[index].selectedAnswers"
+                      v-model="responses[questionIndex].selectedAnswers"
                       :value="answer"
                     ></v-checkbox>
                   </v-list-item-action>
@@ -31,7 +31,7 @@
                 </v-list-item>
               </v-list>
               <v-card-actions>
-                <v-btn color="secondary" @click="submitQuestion(index)"
+                <v-btn color="secondary" @click="submitQuestion(questionIndex)"
                   >Submit</v-btn
                 >
               </v-card-actions>
@@ -132,11 +132,11 @@ export default {
       }
     },
 
-    async submitQuestion(index) {
-      const selectedAnswers = this.responses[index].selectedAnswers;
+    async submitQuestion(questionIndex) {
+      const selectedAnswers = this.responses[questionIndex].selectedAnswers;
 
       if (selectedAnswers.length > 0) {
-        const questionId = this.questions[index].id;
+        const questionId = this.questions[questionIndex].id;
         const selectedAnswerIds = selectedAnswers.map((answer) => answer.id);
 
         await this.submitQuestionAnswers(questionId, selectedAnswerIds);
