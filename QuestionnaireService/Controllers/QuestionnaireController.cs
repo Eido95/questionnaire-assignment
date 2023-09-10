@@ -23,11 +23,7 @@ public class QuestionnaireController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<IEnumerable<QuestionnaireDto>> GetQuestionnaires()
     {
-        return _context.Questionnaires
-            .Include(questionnaire => questionnaire.Questions)!
-            .ThenInclude(question => question.Answers)
-            .Select(questionnaire => new QuestionnaireDto(questionnaire))
-            .ToList();
+        return _context.GetQuestionnaireDtos();
     }
     
     [HttpPost]

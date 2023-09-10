@@ -22,19 +22,14 @@ public class QuestionController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult UpdateQuestion(int respondentId, QuestionUpdateDto questionUpdateDto)
     {
-        var respondent = _context.Respondents
-            .Include(respondent => respondent.RespondentAnswers!)
-            .ThenInclude(respondentAnswer => respondentAnswer.Question)
-            .SingleOrDefault(respondent => respondent.Id == respondentId);
+        var respondent = _context.GetRespondent(respondentId);
 
         if (respondent == null)
         {
             return NotFound();
         }
 
-        var question = _context.Questions
-            .Include(question => question.Answers!)
-            .SingleOrDefault(question => question.Id == questionUpdateDto.Id);
+        var question = _context.GetQuestion(questionUpdateDto.Id);
 
         if (question == null)
         {

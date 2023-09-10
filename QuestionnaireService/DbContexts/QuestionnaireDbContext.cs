@@ -15,11 +15,46 @@ public class QuestionnaireDbContext : DbContext
 
     public QuestionnaireDbContext(DbContextOptions<QuestionnaireDbContext> options) : base(options) { }
     
-    public ActionResult<IEnumerable<RespondentDto>> GetRespondentsDtos()
+    public ActionResult<IEnumerable<RespondentDto>> GetRespondentDtos()
     {
         return Respondents
             .Select(respondent => new RespondentDto(respondent))
             .ToList();
+    }
+    
+    public Respondent? GetRespondent(int respondentId)
+    {
+        return Respondents
+            .Include(respondent => respondent.RespondentAnswers!)
+            .ThenInclude(respondentAnswer => respondentAnswer.Question)
+            .SingleOrDefault(respondent => respondent.Id == respondentId);
+    }
+    
+    public List<RespondentAnswerDto> GetRespondentAnswerDtos(Respondent respondent)
+    {
+        return RespondentsAnswers
+            .Include(respondentAnswer => respondentAnswer.Respondent)
+            .Include(respondentAnswer => respondentAnswer.Question)
+            .Include(respondentAnswer => respondentAnswer.Answer)
+            .Where(respondentAnswer => respondentAnswer.Respondent!.Id == respondent.Id)
+            .Select(respondentAnswer => new RespondentAnswerDto(respondentAnswer))
+            .ToList();
+    }
+    
+    public ActionResult<IEnumerable<QuestionnaireDto>> GetQuestionnaireDtos()
+    {
+        return Questionnaires
+            .Include(questionnaire => questionnaire.Questions)!
+            .ThenInclude(question => question.Answers)
+            .Select(questionnaire => new QuestionnaireDto(questionnaire))
+            .ToList();
+    }
+    
+    public Question? GetQuestion(int? questionId)
+    {
+        return Questions
+            .Include(question => question.Answers!)
+            .SingleOrDefault(question => question.Id == questionId);
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

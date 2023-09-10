@@ -21,6 +21,6 @@ public class RespondentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<IEnumerable<RespondentDto>> GetRespondents()
     {
-        return _context.GetRespondentsDtos();
+        return _context.GetRespondentDtos();
     }
 }
