@@ -19,7 +19,6 @@ const mutations = {
   },
   setRespondents(state, respondents) {
     state.respondents = respondents;
-    debugger;
     state.respondentName = state.respondents.filter(
       (respondent) => respondent.id == state.respondentId
     )[0].name;
@@ -118,7 +117,6 @@ const actions = {
     }
   },
   async submitQuestionAnswers({ commit, state }, {questionId, selectedAnswerIds}) {
-    debugger;
     const requestBody = {
       id: questionId,
       answerIds: selectedAnswerIds,

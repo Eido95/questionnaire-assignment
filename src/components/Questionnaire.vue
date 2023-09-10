@@ -98,7 +98,6 @@ export default {
   },
   watch: {
     $route(to, from) {
-      debugger;
       this.resetState();
       this.setRespondentId(to.params.respondentId);
       this.loadRespondents();
