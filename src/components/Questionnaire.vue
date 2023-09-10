@@ -19,9 +19,12 @@
               :key="questionIndex"
               class="mb-4"
             >
-              <v-card-title class="text-subtitle-1">{{
-                question.text
-              }}</v-card-title>
+              <v-card-title class="text-subtitle-1">
+                Question: {{ question.text }}
+              </v-card-title>
+              <v-card-subtitle v-if="question.comment">
+                Comment: {{ question.comment }}
+              </v-card-subtitle>
               <v-list>
                 <v-list-item
                   v-for="(answer, answerIndex) in question.answers"

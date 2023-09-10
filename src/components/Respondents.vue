@@ -12,7 +12,7 @@
           <v-card-title class="text-h2">Questionnaire</v-card-title>
           <v-card-subtitle class="text-h6">Respondents</v-card-subtitle>
           <v-card-text>
-            <v-row justify="">
+            <v-row>
               <v-col
                 ><v-btn color="primary" @click="navigateToRespondent(1)"
                   >1</v-btn
