@@ -27,6 +27,32 @@ public class QuestionnaireController : ControllerBase
     }
     
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<QuestionnairePostDto> PostQuestionnaire(int respondentId)
+    {
+        var respondent = _context.GetRespondent(respondentId);
+
+        if (respondent == null)
+        {
+            return NotFound();
+        }
+
+        var processedQuestions = new List<Question>();
+        var respondentScore = _context.GetRespondentScore(respondent, processedQuestions);
+
+        var maxQuestionnaireScore = _context.GetMaxQuestionnaireScore();
+
+        var normalizedScore = respondentScore * 10 / maxQuestionnaireScore;
+
+        return new QuestionnairePostDto
+        {
+            NormalizedScore = (int?)normalizedScore,
+            Score = (int?)respondentScore
+        };
+    }
+
+    [HttpPut]
     public void PostQuestionnaire()
     {
         SeedData();
@@ -43,66 +69,13 @@ public class QuestionnaireController : ControllerBase
         };
 
         _context.Questionnaires.Add(questionnaire);
-
-        var question1 = new Question
-        {
-            Text = "password policy – pass length:",
-            Comment = "I'm a comment!",
-            Questionnaire = questionnaire
-        };
         
-        _context.Questions.Add(question1);
+        SeedQuestion1Data(questionnaire);
+        SeedQuestion2Data(questionnaire);
+        SeedQuestion3Data(questionnaire);
+        SeedQuestion4Data(questionnaire);
+        SeedQuestion5Data(questionnaire);
         
-        _context.Answers.Add(new Answer
-        {
-            Question = question1,
-            Text = "4",
-            Score = 0
-        });
-            
-        _context.Answers.Add(new Answer
-        {
-            Question = question1,
-            Text = "6-8",
-            Score = 50
-        });
-            
-        _context.Answers.Add(new Answer
-        {
-            Question = question1,
-            Text = "12+",
-            Score = 90
-        });
-        
-        var question2 = new Question
-        {
-            Text = "What is a Tuna?",
-            Questionnaire = questionnaire
-        };
-        
-        _context.Questions.Add(question2);
-        
-        _context.Answers.Add(new Answer
-        {
-            Question = question2,
-            Text = "A bird",
-            Score = 0
-        });
-            
-        _context.Answers.Add(new Answer
-        {
-            Question = question2,
-            Text = "A fish",
-            Score = 50
-        });
-            
-        _context.Answers.Add(new Answer
-        {
-            Question = question2,
-            Text = "A saltwater fish",
-            Score = 90
-        });
-
         var respondent1 = new Respondent
         {
             Name = "Eido"
@@ -113,15 +86,15 @@ public class QuestionnaireController : ControllerBase
         _context.RespondentsAnswers.Add(new RespondentAnswer
         {
             Respondent = respondent1,
-            Question = question1,
-            Answer = question1.Answers.ToList()[0]
+            Question = _context.Questions.ToArray()[0],
+            Answer = _context.Questions.ToArray()[0].Answers!.ToList()[0]
         });
         
         _context.RespondentsAnswers.Add(new RespondentAnswer
         {
             Respondent = respondent1,
-            Question = question2,
-            Answer = question2.Answers.ToList()[0]
+            Question = _context.Questions.ToArray()[1],
+            Answer = _context.Questions.ToArray()[1].Answers.ToList()[0]
         });
         
         var respondent2 = new Respondent
@@ -134,31 +107,202 @@ public class QuestionnaireController : ControllerBase
         _context.RespondentsAnswers.Add(new RespondentAnswer
         {
             Respondent = respondent2,
-            Question = question1,
-            Answer = question1.Answers.ToList()[1]
+            Question = _context.Questions.ToArray()[0],
+            Answer = _context.Questions.ToArray()[0].Answers.ToList()[1]
         });
         
         _context.RespondentsAnswers.Add(new RespondentAnswer
         {
             Respondent = respondent2,
-            Question = question1,
-            Answer = question1.Answers.ToList()[2]
+            Question = _context.Questions.ToArray()[0],
+            Answer = _context.Questions.ToArray()[0].Answers.ToList()[2]
         });
         
         _context.RespondentsAnswers.Add(new RespondentAnswer
         {
             Respondent = respondent2,
-            Question = question2,
-            Answer = question2.Answers.ToList()[1]
+            Question = _context.Questions.ToArray()[1],
+            Answer = _context.Questions.ToArray()[1].Answers.ToList()[1]
         });
         
         _context.RespondentsAnswers.Add(new RespondentAnswer
         {
             Respondent = respondent2,
-            Question = question2,
-            Answer = question2.Answers.ToList()[2]
+            Question = _context.Questions.ToArray()[1],
+            Answer = _context.Questions.ToArray()[1].Answers.ToList()[2]
         });
             
+        _context.SaveChanges();
+    }
+
+    private void SeedQuestion1Data(Questionnaire questionnaire)
+    {
+        var question = new Question
+        {
+            Text = "What does Cyber Quant aim to measure in an organization's cybersecurity?",
+            Comment = "",
+            Questionnaire = questionnaire
+        };
+        
+        _context.Questions.Add(question);
+        
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "Impact of new cybersecurity controls",
+            Score = 95
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "Financial risk of security breaches",
+            Score = 25
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "How many coffee cups the IT team consumes",
+            Score = 10
+        });
+        
+        _context.SaveChanges();
+    }
+    
+    private void SeedQuestion2Data(Questionnaire questionnaire)
+    {
+        var question = new Question
+        {
+            Text = "In the case study, how much did the bank decrease their financial risk by using Cyber Quant?",
+            Questionnaire = questionnaire
+        };
+        
+        _context.Questions.Add(question);
+        
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "$5",
+            Score = 0
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "$100 million",
+            Score = 80
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "$155 million",
+            Score = 90
+        });
+        
+        _context.SaveChanges();
+    }
+    
+    private void SeedQuestion3Data(Questionnaire questionnaire)
+    {
+        var question = new Question
+        {
+            Text = "What is the goal of Cyber Quant's good user validation solution?",
+            Questionnaire = questionnaire
+        };
+        
+        _context.Questions.Add(question);
+        
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "Protecting online environments from account hacking",
+            Score = 90
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "Assessing third-party risks",
+            Score = 10
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "Prioritizing cybersecurity investments",
+            Score = 25
+        });
+        
+        _context.SaveChanges();
+    }
+    
+    private void SeedQuestion4Data(Questionnaire questionnaire)
+    {
+        var question = new Question
+        {
+            Text = "How long does a typical Cyber Quant consulting engagement last?",
+            Questionnaire = questionnaire
+        };
+        
+        _context.Questions.Add(question);
+        
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "1 hour",
+            Score = 0
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "1 week",
+            Score = 30
+        });
+
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "3 weeks",
+            Score = 80
+        });
+        
+        _context.SaveChanges();
+    }
+    
+    private void SeedQuestion5Data(Questionnaire questionnaire)
+    {
+        var question = new Question
+        {
+            Text = "How many cybersecurity controls does Cyber Quant assess?",
+            Questionnaire = questionnaire
+        };
+        
+        _context.Questions.Add(question);
+        
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "70",
+            Score = 30
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "50",
+            Score = 100
+        });
+            
+        _context.Answers.Add(new Answer
+        {
+            Question = question,
+            Text = "It depends whether the customer is liken by us",
+            Score = 5
+        });
+        
         _context.SaveChanges();
     }
 }

@@ -26,7 +26,9 @@ public class QuestionnaireDbContext : DbContext
     {
         return Respondents
             .Include(respondent => respondent.RespondentAnswers!)
-            .ThenInclude(respondentAnswer => respondentAnswer.Question)
+                .ThenInclude(respondentAnswer => respondentAnswer.Question)
+            .Include(respondent => respondent.RespondentAnswers!)
+                .ThenInclude(respondentAnswer => respondentAnswer.Answer)
             .SingleOrDefault(respondent => respondent.Id == respondentId);
     }
     
@@ -55,6 +57,45 @@ public class QuestionnaireDbContext : DbContext
         return Questions
             .Include(question => question.Answers!)
             .SingleOrDefault(question => question.Id == questionId);
+    }
+    
+    public int? GetMaxQuestionnaireScore()
+    {
+        return Questions
+            .Include(question => question.Answers)
+            .Sum(question => question.Answers!.Sum(answer => answer.Score));
+    }
+
+    public int? GetQuestionScoreSum(Question? question)
+    {
+        return Answers
+            .Include(answer => answer.Question)
+            .Where(answer => answer.Question!.Id == question!.Id)
+            .Sum(answer => answer.Score);
+    }
+    
+    public double? GetRespondentScore(Respondent respondent, List<Question> processedQuestions)
+    {
+        return respondent.RespondentAnswers!.Sum(respondentAnswer =>
+        {
+            var question = respondentAnswer.Question;
+
+            if (processedQuestions.Contains(question!)) return 0; 
+
+            var totalRespondentAnswers =
+                respondent.RespondentAnswers!.Count(answer => answer.Question!.Id == question!.Id);
+
+            if (totalRespondentAnswers == 1)
+            {
+                processedQuestions.Add(question!);
+                var questionScoreSum = GetQuestionScoreSum(question);
+                return questionScoreSum  * 0.5;
+            }
+            else
+            {
+                return respondentAnswer.Answer!.Score;
+            }
+        });
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
