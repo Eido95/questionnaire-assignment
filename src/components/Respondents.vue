@@ -14,15 +14,18 @@
           <v-card-text>
             <v-row>
               <v-col
-                ><v-btn color="primary" @click="navigateToRespondent(1)"
-                  >1</v-btn
-                ></v-col
+                v-for="respondent in respondents"
+                :key="respondent.id"
+                class="ma-5"
               >
-              <v-col
-                ><v-btn color="primary" @click="navigateToRespondent(2)"
-                  >2</v-btn
-                ></v-col
-              >
+                <v-btn
+                  color="primary"
+                  @click="navigateToRespondent(respondent.id)"
+                >
+                  {{ respondent.name }}</v-btn
+                >
+              </v-col>
+              <v-spacer></v-spacer>
             </v-row>
           </v-card-text>
         </v-card>
@@ -32,12 +35,22 @@
 </template>
 
 <script>
+import { mapState, mapMutations, mapActions } from "vuex";
+
 export default {
   name: "respondents",
+  computed: {
+    ...mapState("questionnaire", ["respondents"]),
+  },
   methods: {
+    ...mapActions("questionnaire", ["loadRespondents"]),
+
     navigateToRespondent(respondentId) {
       this.$router.push({ name: "questionnaire", params: { respondentId } });
     },
+  },
+  created() {
+    this.loadRespondents();
   },
 };
 </script>
