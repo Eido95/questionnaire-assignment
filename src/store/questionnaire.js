@@ -8,12 +8,19 @@ const getDefaultState = () => {
     questions: [],
     responses: [],
     respondentAnswers: [],
+    questionnaireScore: {
+      score: null,
+      normalizedScore: null,
+    },
   };
 };
 
 const state = getDefaultState();
 
 const mutations = {
+  resetState(state) {
+    Object.assign(state, getDefaultState());
+  },
   setRespondentId(state, respondentId) {
     state.respondentId = respondentId;
   },
@@ -43,18 +50,23 @@ const mutations = {
 
     state.responses[questionIndex].selectedAnswers = updatedSelectedAnswers;
   },
-  resetState(state) {
-    Object.assign(state, getDefaultState());
+  setQuestionnaireScore(state, questionnaireScore) {
+    state.questionnaireScore.score = questionnaireScore.score;
+    state.questionnaireScore.normalizedScore = questionnaireScore.normalizedScore;
   },
 };
 
 const actions = {
   async loadRespondents({ commit, state }) {
-    const response = await axios.get(
-      "http://localhost:5133/api/v1/questionnaire/Respondent"
-    );
+    try {
+      const response = await axios.get(
+        "http://localhost:5133/api/v1/questionnaire/Respondent"
+      );
 
-    commit("setRespondents", response.data);
+      commit("setRespondents", response.data);
+    } catch (error) {
+      console.error(error);
+    }
   },
   async loadQuestionnaire({ commit, state }) {
     try {
@@ -130,6 +142,17 @@ const actions = {
       console.log(requestBody);
     } catch (error) {
       console.error("Error submitting question answers:", error);
+    }
+  },
+  async finishQuestionnaire({ commit, state }) {
+    try {
+      const response = await axios.post(
+        `http://localhost:5133/api/v1/questionnaire/Questionnaire?respondentId=${state.respondentId}`
+      );
+
+      commit("setQuestionnaireScore", response.data);
+    } catch (error) {
+      console.error("Error fetching questionnaire score:", error);
     }
   },
 };

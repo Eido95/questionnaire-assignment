@@ -10,16 +10,28 @@
         />
         <v-card class="mx-auto mt-10" max-width="540">
           <v-card-title class="text-h2">Questionnaire</v-card-title>
-          <v-card-subtitle class="text-h6">{{
-            respondentName
-          }}</v-card-subtitle>
+          <v-card-subtitle class="text-h5"
+            >Respondents > {{ respondentName }}</v-card-subtitle
+          >
           <v-card-text>
+            <p>
+              The questionnaire is based on the following links:<br/>
+              1. <a href="https://www.mastercardservices.com/en/solutions/security-business-operations/cyber-quant">
+                Cyber Quant | Mastercard Data & Services</a>
+                <br>
+              2. <a href="https://www.mastercard.ca/en-ca/business/large-enterprise/safety-security/cyber-solutions/cyber-quant.html">
+                Cyber Quant | Mastercard's Cybersecurity Risk Assessment</a>
+                <br>
+              <br/>
+              Click "Finish" button below to see your quetionnaire score </br> 
+              (don't forget to submit all your answers)
+            </p>
             <v-card
               v-for="(question, questionIndex) in questions"
               :key="questionIndex"
-              class="mb-4"
+              class="ma-5"
             >
-              <v-card-title class="text-subtitle-1">
+              <v-card-title class="text-subtitle-1" style="word-break: keep-all;">
                 Question: {{ question.text }}
               </v-card-title>
               <v-card-subtitle v-if="question.comment">
@@ -50,6 +62,15 @@
           </v-card-text>
           <v-card-actions>
             <v-btn color="primary" @click="finishQuestionnaire">Finish</v-btn>
+            <v-spacer></v-spacer>
+            <v-avatar
+              v-if="questionnaireScore.normalizedScore !== null"
+              class="font-weight-bold text-decoration-underline white--text"
+              :color="getScoreAvatarColor(questionnaireScore.normalizedScore)"
+              size="56"
+            >
+              {{ questionnaireScore.normalizedScore }}
+            </v-avatar>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -71,6 +92,7 @@ export default {
       "respondentAnswers",
       "respondentId",
       "respondentName",
+      "questionnaireScore",
     ]),
   },
   methods: {
@@ -87,11 +109,11 @@ export default {
       "loadQuestionnaire",
       "updateSelectedAnswers",
       "submitQuestionAnswers",
+      "finishQuestionnaire",
     ]),
     isSelected(questionIndex, answer) {
       return this.responses[questionIndex].selectedAnswers.includes(answer);
     },
-
     async submitQuestion(questionIndex) {
       const selectedAnswers = this.responses[questionIndex].selectedAnswers;
 
@@ -100,9 +122,14 @@ export default {
 
       this.submitQuestionAnswers({ questionId, selectedAnswerIds });
     },
-    finishQuestionnaire() {
-      // Implement your logic for finishing the questionnaire
-      // You can use this.responses to access all selected answers
+    getScoreAvatarColor(normalizedScore) {
+      if (normalizedScore >= 7) {
+        return "primary";
+      } else if (normalizedScore >= 4) {
+        return "secondary";
+      } else {
+        return "accent";
+      }
     },
   },
   watch: {

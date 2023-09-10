@@ -10,7 +10,7 @@
         />
         <v-card class="mx-auto mt-10" max-width="540">
           <v-card-title class="text-h2">Questionnaire</v-card-title>
-          <v-card-subtitle class="text-h6">Respondents</v-card-subtitle>
+          <v-card-subtitle class="text-h5">Respondents</v-card-subtitle>
           <v-card-text>
             <v-row>
               <v-col
