@@ -1,18 +1,15 @@
 <template>
-  <!-- <hello-world /> -->
-  <questionnaire />
+  <respondents />
 </template>
 
 <script>
-import HelloWorld from "@/components/HelloWorld";
-import Questionnaire from "@/components/Questionnaire.vue";
+import Respondents from "@/components/Respondents";
 
 export default {
   name: "Home",
 
   components: {
-    HelloWorld,
-    Questionnaire,
+    Respondents,
   },
 };
 </script>

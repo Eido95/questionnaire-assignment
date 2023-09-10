@@ -4,7 +4,9 @@
       <v-col cols="12" sm="8" md="6">
         <v-card class="mx-auto mt-10" max-width="540">
           <v-card-title class="text-h2">Questionnaire</v-card-title>
-          <v-card-subtitle class="text-h6">Eido</v-card-subtitle>
+          <v-card-subtitle class="text-h6">{{
+            respondentName
+          }}</v-card-subtitle>
           <v-card-text>
             <v-card
               v-for="(question, questionIndex) in questions"
@@ -59,15 +61,19 @@ export default {
       "responses",
       "respondentAnswers",
       "respondentId",
+      "respondentName",
     ]),
   },
   methods: {
-    ...mapMutations("questionnaire", {
-      setQuestions: "setQuestions",
-      setResponses: "setResponses",
-      setRespondentAnswers: "setRespondentAnswers",
-    }),
+    ...mapMutations("questionnaire", [
+      "setQuestions",
+      "setResponses",
+      "setRespondentAnswers",
+      "setRespondentId",
+      "resetState",
+    ]),
     ...mapActions("questionnaire", [
+      "loadRespondents",
       "loadRespondentAnswers",
       "loadQuestionnaire",
       "updateSelectedAnswers",
@@ -90,7 +96,18 @@ export default {
       // You can use this.responses to access all selected answers
     },
   },
+  watch: {
+    $route(to, from) {
+      debugger;
+      this.resetState();
+      this.setRespondentId(to.params.respondentId);
+      this.loadRespondents();
+      this.loadQuestionnaire();
+      this.loadRespondentAnswers();
+    },
+  },
   mounted() {
+    this.loadRespondents();
     this.loadQuestionnaire();
     this.loadRespondentAnswers();
   },
