@@ -20,7 +20,7 @@ public class QuestionController : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult UpdateQuestion(int respondentId, QuestionDto questionDto)
+    public ActionResult UpdateQuestion(int respondentId, QuestionUpdateDto questionUpdateDto)
     {
         var respondent = _context.Respondents
             .Include(respondent => respondent.RespondentAnswers!)
@@ -33,30 +33,36 @@ public class QuestionController : ControllerBase
         }
 
         var question = _context.Questions
-            .Include(question => question.Answers!).SingleOrDefault(question => question.Id == questionDto.Id);
+            .Include(question => question.Answers!)
+            .SingleOrDefault(question => question.Id == questionUpdateDto.Id);
 
         if (question == null)
         {
             return BadRequest();
         }
 
-        var areAnswersValid = questionDto.Answers!.All(answerDto => question.Answers!.Any(answer => answerDto.Id == answer.Id));
+        var areAnswersValid = questionUpdateDto.AnswerIds!
+            .All(answerId => question.Answers!
+                .Any(answer => answerId == answer.Id));
 
         if (!areAnswersValid)
         {
             return BadRequest();
         }
+        
+        var answers = _context.Answers
+            .Where(answer => questionUpdateDto.AnswerIds!.Contains((int)answer.Id!));
 
-        RemoveAllRespondentQuestionAnswers(respondent, question);
+        RemoveAllRespondentQuestionAnswers(question, respondent);
 
-        UpdateRespondentQuestionAnswers(questionDto, question, respondent);
+        UpdateRespondentQuestionAnswers(question, respondent, answers);
         
         return Ok();
     }
 
-    private void UpdateRespondentQuestionAnswers(QuestionDto questionDto, Question question, Respondent respondent)
+    private void UpdateRespondentQuestionAnswers(Question question, Respondent respondent, IEnumerable<Answer> answers)
     {
-        var updatedRespondentAnswers = questionDto.Answers!.Select(answerDto => new RespondentAnswer
+        var updatedRespondentAnswers = answers!.Select(answerDto => new RespondentAnswer
         {
             Answer = question.Answers!.SingleOrDefault(answer => answer.Id == answerDto.Id),
             Question = question,
@@ -68,7 +74,7 @@ public class QuestionController : ControllerBase
         _context.SaveChanges();
     }
 
-    private void RemoveAllRespondentQuestionAnswers(Respondent respondent, Question question)
+    private void RemoveAllRespondentQuestionAnswers(Question question, Respondent respondent)
     {
         var respondentQuestionAnswers = respondent.RespondentAnswers!.Where(answer => answer.Question!.Id == question.Id);
 
