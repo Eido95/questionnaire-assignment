@@ -3,7 +3,8 @@
     <v-row justify="center">
       <v-col cols="12" sm="8" md="6">
         <v-card class="mx-auto" max-width="540">
-          <v-card-title>Questionnaire</v-card-title>
+          <v-card-title class="text-h2">Questionnaire</v-card-title>
+          <v-card-subtitle class="text-h6">Eido</v-card-subtitle>
           <v-card-text>
             <v-card
               v-for="(question, index) in questions"
@@ -30,7 +31,7 @@
                 </v-list-item>
               </v-list>
               <v-card-actions>
-                <v-btn color="secondary" @click="submitAnswer(index)"
+                <v-btn color="secondary" @click="submitQuestion(index)"
                   >Submit</v-btn
                 >
               </v-card-actions>
@@ -46,19 +47,55 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   data() {
     return {
+      respondentId: 1,
       questions: [],
       responses: [],
+      respondentAnswers: [],
     };
   },
   methods: {
-    async loadQuestions() {
+    async loadRespondentAnswers() {
+      axios
+        .get(
+          `http://localhost:5133/api/v1/questionnaire/RespondentAnswer?respondentId=${this.respondentId}`
+        )
+        .then((response) => {
+          this.respondentAnswers = response.data;
+
+          // Loop through respondentAnswers
+          this.respondentAnswers.forEach((answer) => {
+            // Find the corresponding question
+            const questionIndex = this.questions.findIndex(
+              (q) => q.id === answer.questionId
+            );
+            if (questionIndex !== -1) {
+              // Find the corresponding answer
+              const answerIndex = this.questions[
+                questionIndex
+              ].answers.findIndex((a) => a.id === answer.answerId);
+              if (answerIndex !== -1) {
+                // Check the corresponding checkbox
+                this.responses[questionIndex].selectedAnswers.push(
+                  this.questions[questionIndex].answers[answerIndex]
+                );
+              }
+            }
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching respondent answers:", error);
+        });
+    },
+    async loadQuestionnaire() {
       try {
-        const response = await axios.get('http://localhost:5133/api/v1/questionnaire/Questionnaire');
+        const response = await axios.get(
+          "http://localhost:5133/api/v1/questionnaire/Questionnaire"
+        );
         const questionnaireData = response.data[0];
 
         this.questions = questionnaireData.questions.map((question) => ({
@@ -77,9 +114,33 @@ export default {
         console.error(error);
       }
     },
-    submitAnswer(index) {
-      // Implement your logic to handle the submission of answers for this specific question
-      // You can use this.responses[index] to access the selected answers for this question
+    async submitQuestionAnswers(questionId, selectedAnswerIds) {
+      const requestBody = {
+        id: questionId,
+        answerIds: selectedAnswerIds,
+      };
+
+      try {
+        const response = await axios.put(
+          `http://localhost:5133/api/v1/questionnaire/Question?respondentId=${this.respondentId}`,
+          requestBody
+        );
+        console.log("Question answers submitted successfully:", response.data);
+        console.log(requestBody);
+      } catch (error) {
+        console.error("Error submitting question answers:", error);
+      }
+    },
+
+    async submitQuestion(index) {
+      const selectedAnswers = this.responses[index].selectedAnswers;
+
+      if (selectedAnswers.length > 0) {
+        const questionId = this.questions[index].id;
+        const selectedAnswerIds = selectedAnswers.map((answer) => answer.id);
+
+        await this.submitQuestionAnswers(questionId, selectedAnswerIds);
+      }
     },
     finishQuestionnaire() {
       // Implement your logic for finishing the questionnaire
@@ -87,7 +148,8 @@ export default {
     },
   },
   mounted() {
-    this.loadQuestions();
+    this.loadQuestionnaire();
+    this.loadRespondentAnswers();
   },
 };
 </script>
