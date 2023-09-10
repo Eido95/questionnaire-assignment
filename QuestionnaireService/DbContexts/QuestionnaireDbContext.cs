@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QuestionnaireService.Dtos;
 using QuestionnaireService.Models;
 
 namespace QuestionnaireService.DbContexts;
@@ -12,6 +14,13 @@ public class QuestionnaireDbContext : DbContext
     public DbSet<RespondentAnswer> RespondentsAnswers { get; set; }
 
     public QuestionnaireDbContext(DbContextOptions<QuestionnaireDbContext> options) : base(options) { }
+    
+    public ActionResult<IEnumerable<RespondentDto>> GetRespondentsDtos()
+    {
+        return Respondents
+            .Select(respondent => new RespondentDto(respondent))
+            .ToList();
+    }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
