@@ -17,7 +17,7 @@ public static class DbInitializer
     {
         var questionnaire = new Questionnaire
         {
-            Subject = "Dummy"
+            Subject = "Cyber Quant"
         };
 
         context.Questionnaires.Add(questionnaire);
