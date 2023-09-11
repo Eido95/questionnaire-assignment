@@ -50,6 +50,9 @@ const mutations = {
 
     state.responses[questionIndex].selectedAnswers = updatedSelectedAnswers;
   },
+  clearSelectedAnswers(state, { questionIndex }) {
+    state.responses[questionIndex].selectedAnswers = [];
+  },
   setQuestionnaireScore(state, questionnaireScore) {
     state.questionnaireScore.score = questionnaireScore.score;
     state.questionnaireScore.normalizedScore = questionnaireScore.normalizedScore;
@@ -127,6 +130,10 @@ const actions = {
     } else {
       commit("addSelectedAnswer", { questionIndex, answer });
     }
+  },
+  async clearAndUpdateSelectedAnswers({ dispatch, commit }, { questionIndex, answer }) {
+    commit("clearSelectedAnswers", { questionIndex });
+    await dispatch("updateSelectedAnswers", { questionIndex, answer });
   },
   async submitQuestionAnswers({ commit, state }, {questionId, selectedAnswerIds}) {
     const requestBody = {

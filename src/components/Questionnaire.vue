@@ -37,7 +37,7 @@
               <v-card-subtitle v-if="question.comment">
                 Comment: {{ question.comment }}
               </v-card-subtitle>
-              <v-list>
+              <v-list v-if="question.isSingleChoice == false">
                 <v-list-item
                   v-for="(answer, answerIndex) in question.answers"
                   :key="answerIndex"
@@ -52,6 +52,25 @@
                     {{ answer.text }}
                   </v-list-item-content>
                 </v-list-item>
+              </v-list>
+              <v-list v-else>
+                <v-radio-group 
+                :value="selectedAnswerId(questionIndex)"
+                > 
+                  <v-list-item
+                    v-for="(answer, answerIndex) in question.answers"
+                    :key="answerIndex">
+                    <v-list-item-action>
+                      <v-radio
+                      :value="answer.id"
+                      @change="clearAndUpdateSelectedAnswers({questionIndex, answer})"
+                      ></v-radio>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      {{ answer.text }}
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-radio-group>
               </v-list>
               <v-card-actions>
                 <v-btn color="secondary" @click="submitQuestion(questionIndex)"
@@ -108,9 +127,18 @@ export default {
       "loadRespondentAnswers",
       "loadQuestionnaire",
       "updateSelectedAnswers",
+      "clearAndUpdateSelectedAnswers",
       "submitQuestionAnswers",
       "finishQuestionnaire",
     ]),
+    selectedAnswerId(questionIndex) {
+      if (this.responses[questionIndex].selectedAnswers.length > 0) {
+        return this.responses[questionIndex].selectedAnswers[0].id;
+      }
+      else {
+        return null;
+      }
+    },
     isSelected(questionIndex, answer) {
       return this.responses[questionIndex].selectedAnswers.includes(answer);
     },
