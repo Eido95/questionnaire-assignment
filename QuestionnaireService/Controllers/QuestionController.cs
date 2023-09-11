@@ -36,6 +36,11 @@ public class QuestionController : ControllerBase
             return BadRequest();
         }
 
+        if (question.IsSingleChoice && questionUpdateDto.AnswerIds!.ToList().Count() != 1)
+        {
+            return BadRequest();
+        }
+
         var areAnswersValid = questionUpdateDto.AnswerIds!
             .All(answerId => question.Answers!
                 .Any(answer => answerId == answer.Id));

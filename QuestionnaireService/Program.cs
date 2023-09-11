@@ -38,11 +38,15 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("AllowAllOrigins");
+
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<QuestionnaireDbContext>();
+    DbInitializer.Initialize(context);
 }
 
 app.UseHttpsRedirection();
-
-app.UseCors("AllowAllOrigins");
 
 app.UseAuthorization();
 

@@ -66,7 +66,7 @@ public class QuestionnaireDbContext : DbContext
             .Sum(question => question.Answers!.Sum(answer => answer.Score));
     }
 
-    public int? GetQuestionScoreSum(Question? question)
+    private int? GetQuestionScoreSum(Question? question)
     {
         return Answers
             .Include(answer => answer.Question)
@@ -74,30 +74,32 @@ public class QuestionnaireDbContext : DbContext
             .Sum(answer => answer.Score);
     }
     
-    public double? GetRespondentScore(Respondent respondent, List<Question> processedQuestions)
+    public double? GetRespondentScore(Respondent respondent)
     {
         return respondent.RespondentAnswers!.Sum(respondentAnswer =>
         {
             var question = respondentAnswer.Question;
 
-            if (processedQuestions.Contains(question!)) return 0; 
-
-            var totalRespondentAnswers =
-                respondent.RespondentAnswers!.Count(answer => answer.Question!.Id == question!.Id);
-
-            if (totalRespondentAnswers == 1)
-            {
-                processedQuestions.Add(question!);
-                var questionScoreSum = GetQuestionScoreSum(question);
-                return questionScoreSum  * 0.5;
-            }
-            else
+            if (question!.IsSingleChoice)
             {
                 return respondentAnswer.Answer!.Score;
             }
+
+            var totalQuestionRespondentAnswers = GetTotalQuestionRespondentAnswers(respondent, question);
+
+            if (totalQuestionRespondentAnswers != 1) return respondentAnswer.Answer!.Score;
+            
+            var questionScoreSum = GetQuestionScoreSum(question);
+            return questionScoreSum * 0.5;
+
         });
     }
-    
+
+    private static int GetTotalQuestionRespondentAnswers(Respondent respondent, Question question)
+    {
+        return respondent.RespondentAnswers!.Count(respondentAnswer => respondentAnswer.Question!.Id == question.Id);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -115,6 +117,7 @@ public class QuestionnaireDbContext : DbContext
                 .HasOne(question => question.Questionnaire)
                 .WithMany(questionnaire => questionnaire.Questions);
             builder.Property(question => question.Text).IsRequired();
+            builder.Property(question => question.IsSingleChoice);
             builder.Property(question => question.Comment);
         });
 
