@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const API_HOST = "192.168.49.2:30009";
+
 const getDefaultState = () => {
   return {
     respondentId: null,
@@ -63,7 +65,7 @@ const actions = {
   async loadRespondents({ commit, state }) {
     try {
       const response = await axios.get(
-        "http://localhost:5133/api/v1/questionnaire/Respondent"
+        `http://${API_HOST}/api/v1/questionnaire/Respondent`
       );
 
       commit("setRespondents", response.data);
@@ -74,7 +76,7 @@ const actions = {
   async loadQuestionnaire({ commit, state }) {
     try {
       const response = await axios.get(
-        "http://localhost:5133/api/v1/questionnaire/Questionnaire"
+        `http://${API_HOST}/api/v1/questionnaire/Questionnaire`
       );
 
       const questions = response.data[0].questions;
@@ -94,7 +96,7 @@ const actions = {
   async loadRespondentAnswers({ commit, state }) {
     try {
       const response = await axios.get(
-        `http://localhost:5133/api/v1/questionnaire/RespondentAnswer?respondentId=${state.respondentId}`
+        `http://${API_HOST}/api/v1/questionnaire/RespondentAnswer?respondentId=${state.respondentId}`
       );
 
       const respondentAnswers = response.data;
@@ -143,7 +145,7 @@ const actions = {
 
     try {
       await axios.put(
-        `http://localhost:5133/api/v1/questionnaire/Question?respondentId=${state.respondentId}`,
+        `http://${API_HOST}/api/v1/questionnaire/Question?respondentId=${state.respondentId}`,
         requestBody
       );
       console.log(requestBody);
@@ -154,7 +156,7 @@ const actions = {
   async finishQuestionnaire({ commit, state }) {
     try {
       const response = await axios.post(
-        `http://localhost:5133/api/v1/questionnaire/Questionnaire?respondentId=${state.respondentId}`
+        `http://${API_HOST}/api/v1/questionnaire/Questionnaire?respondentId=${state.respondentId}`
       );
 
       commit("setQuestionnaireScore", response.data);
