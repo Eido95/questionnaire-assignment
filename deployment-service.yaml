@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: questionnaire-service
+  labels:
+    app: questionnaire-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: questionnaire-service
+  template:
+    metadata:
+      name: questionnaire-service
+      labels:
+        app: questionnaire-service
+    spec:
+      containers:
+        - name: questionnaire-service
+          image: gryphon2411/questionnaire-service:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: questionnaire-service-api
+spec:
+  selector:
+    app: questionnaire-service
+  ports:
+    - port: 81
+      targetPort: 80
+      nodePort: 30001
+  type: NodePort
+  
