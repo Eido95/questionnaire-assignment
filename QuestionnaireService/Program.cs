@@ -2,6 +2,10 @@ using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using QuestionnaireService.DbContexts;
 
+var mysqlServerHost = "mysql";
+
+var mysqlServerUser = "root";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,7 +29,7 @@ builder.Services.AddControllers()
     });
 builder.Services.AddDbContext<QuestionnaireDbContext>(options => 
     options
-        .UseMySQL("server=localhost;database=questionnaire;user=eido;password=1q2w#")
+        .UseMySQL($"server={mysqlServerHost};database=questionnaire;user={mysqlServerUser};password=password")
         .LogTo(Console.WriteLine));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
