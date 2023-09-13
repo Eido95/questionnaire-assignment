@@ -6,7 +6,6 @@ public class QuestionDto
 {
     public int? Id { get; set; }
     public string? Text { get; set; }
-    public bool IsSingleChoice { get; set; }
     public string? Comment { get; set; }
     public virtual ICollection<AnswerDto>? Answers { get; set; }
 
@@ -15,8 +14,7 @@ public class QuestionDto
     {
         Id = question.Id;
         Text = question.Text;
-        IsSingleChoice = question.IsSingleChoice;
-        Comment = question.Comment;
+        Comment = question.GetType() == typeof(MultipleChoiceQuestion) ? ((MultipleChoiceQuestion)question).Comment : null;
         if (question.Answers != null) Answers = question.Answers.Select(answer => new AnswerDto(answer)).ToList();
     }
 }

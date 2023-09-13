@@ -36,7 +36,7 @@ public class QuestionController : ControllerBase
             return BadRequest();
         }
 
-        if (question.IsSingleChoice && questionUpdateDto.AnswerIds!.ToList().Count() != 1)
+        if (question.GetType() == typeof(SingleChoiceQuestion) && questionUpdateDto.AnswerIds!.ToList().Count() != 1)
         {
             return BadRequest();
         }

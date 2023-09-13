@@ -93,10 +93,9 @@ public static class DbInitializer
 
     private static void SeedQuestion1Data(QuestionnaireDbContext context, Questionnaire questionnaire)
     {
-        var question = new Question
+        var question = new MultipleChoiceQuestion
         {
             Text = "What does Cyber Quant aim to measure in an organization's cybersecurity?",
-            IsSingleChoice = false, 
             Comment = "That is a tricky question",
             Questionnaire = questionnaire
         };
@@ -129,10 +128,9 @@ public static class DbInitializer
     
     private static void SeedQuestion2Data(QuestionnaireDbContext context, Questionnaire questionnaire)
     {
-        var question = new Question
+        var question = new SingleChoiceQuestion
         {
             Text = "In the case study, how much did the bank decrease their financial risk by using Cyber Quant?",
-            IsSingleChoice = true,
             Questionnaire = questionnaire
         };
         
@@ -164,10 +162,9 @@ public static class DbInitializer
     
     private static void SeedQuestion3Data(QuestionnaireDbContext context, Questionnaire questionnaire)
     {
-        var question = new Question
+        var question = new MultipleChoiceQuestion
         {
             Text = "What is the goal of Cyber Quant's good user validation solution?",
-            IsSingleChoice = false,
             Comment = "You know the answer",
             Questionnaire = questionnaire
         };
@@ -200,10 +197,9 @@ public static class DbInitializer
     
     private static void SeedQuestion4Data(QuestionnaireDbContext context, Questionnaire questionnaire)
     {
-        var question = new Question
+        var question = new SingleChoiceQuestion
         {
             Text = "How long does a typical Cyber Quant consulting engagement last?",
-            IsSingleChoice = true,
             Questionnaire = questionnaire
         };
         
@@ -235,10 +231,9 @@ public static class DbInitializer
     
     private static void SeedQuestion5Data(QuestionnaireDbContext context, Questionnaire questionnaire)
     {
-        var question = new Question
+        var question = new MultipleChoiceQuestion
         {
             Text = "How many cybersecurity controls does Cyber Quant assess?",
-            IsSingleChoice = false,
             Comment = "You can do it!",
             Questionnaire = questionnaire
         };

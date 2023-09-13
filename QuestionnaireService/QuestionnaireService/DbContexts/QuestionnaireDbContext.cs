@@ -80,7 +80,7 @@ public class QuestionnaireDbContext : DbContext
         {
             var question = respondentAnswer.Question;
 
-            if (question!.IsSingleChoice)
+            if (question!.GetType() == typeof(SingleChoiceQuestion))
             {
                 return respondentAnswer.Answer!.Score;
             }
@@ -113,13 +113,21 @@ public class QuestionnaireDbContext : DbContext
         modelBuilder.Entity<Question>(builder =>
         {
             builder.HasKey(question => question.Id);
+            builder.HasDiscriminator<string>("QuestionType")
+                .HasValue<MultipleChoiceQuestion>("multiple_choice_question")
+                .HasValue<SingleChoiceQuestion>("single_choice_question");
             builder
                 .HasOne(question => question.Questionnaire)
                 .WithMany(questionnaire => questionnaire.Questions);
             builder.Property(question => question.Text).IsRequired();
-            builder.Property(question => question.IsSingleChoice);
+        });
+
+        modelBuilder.Entity<MultipleChoiceQuestion>(builder =>
+        {
             builder.Property(question => question.Comment);
         });
+
+        modelBuilder.Entity<SingleChoiceQuestion>();
 
         modelBuilder.Entity<Answer>(builder =>
         {
