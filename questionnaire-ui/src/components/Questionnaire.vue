@@ -37,7 +37,7 @@
               <v-card-subtitle v-if="question.comment">
                 Comment: {{ question.comment }}
               </v-card-subtitle>
-              <v-list v-if="question.isSingleChoice == false">
+              <v-list v-if="question.comment">
                 <v-list-item
                   v-for="(answer, answerIndex) in question.answers"
                   :key="answerIndex"
@@ -55,8 +55,7 @@
               </v-list>
               <v-list v-else>
                 <v-radio-group 
-                :value="selectedAnswerId(questionIndex)"
-                > 
+                :value="selectedAnswerId(questionIndex)"> 
                   <v-list-item
                     v-for="(answer, answerIndex) in question.answers"
                     :key="answerIndex">
@@ -73,9 +72,7 @@
                 </v-radio-group>
               </v-list>
               <v-card-actions>
-                <v-btn color="secondary" @click="submitQuestion(questionIndex)"
-                  >Submit</v-btn
-                >
+                <v-btn color="secondary" @click="submitQuestion(questionIndex)">Submit</v-btn>
               </v-card-actions>
             </v-card>
           </v-card-text>
@@ -160,16 +157,7 @@ export default {
       }
     },
   },
-  watch: {
-    $route(to, from) {
-      this.resetState();
-      this.setRespondentId(to.params.respondentId);
-      this.loadRespondents();
-      this.loadQuestionnaire();
-      this.loadRespondentAnswers();
-    },
-  },
-  mounted() {
+  created() {
     this.loadRespondents();
     this.loadQuestionnaire();
     this.loadRespondentAnswers();

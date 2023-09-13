@@ -28,9 +28,12 @@ const mutations = {
   },
   setRespondents(state, respondents) {
     state.respondents = respondents;
-    state.respondentName = state.respondents.filter(
-      (respondent) => respondent.id == state.respondentId
-    )[0].name;
+
+    if (state.respondentId) {
+      state.respondentName = state.respondents.filter(
+        (respondent) => respondent.id == state.respondentId
+      )[0].name;
+    }
   },
   setQuestions(state, questions) {
     state.questions = questions;

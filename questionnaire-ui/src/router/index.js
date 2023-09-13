@@ -19,6 +19,7 @@ const routes = [
     props: (route) => ({ respondentId: Number(route.params.respondentId) }),
     beforeEnter: (to, from, next) => {
       const respondentId = Number(to.params.respondentId);
+      store.commit("questionnaire/resetState");
       store.commit("questionnaire/setRespondentId", respondentId);
       next();
     },
