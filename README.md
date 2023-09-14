@@ -6,8 +6,8 @@ Author: Eido Askayo
 
 ### Cluster Setup and Deployment
 
-1. `minikube start`
-2. `kubectl config current-context` - Make sure you use `minikube` Kubernetes cluster
+1. `minikube start -p minikube-1`
+2. `kubectl config current-context` - Make sure you use `minikube-1` Kubernetes cluster
 3. Deploy database
     1. `kubectl apply -f pv-mysql.yaml`
     2. `kubectl apply -f deployment-mysql.yaml`
@@ -25,8 +25,8 @@ Author: Eido Askayo
 
 ### Cluster Teardown
 
-1. `minikube stop`
-2. `minikube delete`
+1. `minikube -p minikube-1 stop`
+2. `minikube -p minikube-1 delete`
 
 ## Contributing Guidelines
 
