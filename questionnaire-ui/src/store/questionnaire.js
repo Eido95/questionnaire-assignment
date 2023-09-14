@@ -44,19 +44,19 @@ const mutations = {
   setRespondentAnswers(state, respondentAnswers) {
     state.respondentAnswers = respondentAnswers;
   },
-  addSelectedAnswer(state, { questionIndex, answer }) {
-    state.responses[questionIndex].selectedAnswers.push(answer);
+  addSelectedAnswer(state, { questionId, answer }) {
+    state.responses[questionId].selectedAnswers.push(answer);
   },
-  removeSelectedAnswer(state, { questionIndex, answer }) {
-    const selectedAnswers = state.responses[questionIndex].selectedAnswers;
+  removeSelectedAnswer(state, { questionId, answer }) {
+    const selectedAnswers = state.responses[questionId].selectedAnswers;
     const updatedSelectedAnswers = selectedAnswers.filter(
       (selectedAnswer) => selectedAnswer !== answer
     );
 
-    state.responses[questionIndex].selectedAnswers = updatedSelectedAnswers;
+    state.responses[questionId].selectedAnswers = updatedSelectedAnswers;
   },
-  clearSelectedAnswers(state, { questionIndex }) {
-    state.responses[questionIndex].selectedAnswers = [];
+  clearSelectedAnswers(state, { questionId }) {
+    state.responses[questionId].selectedAnswers = [];
   },
   setQuestionnaireScore(state, questionnaireScore) {
     state.questionnaireScore.score = questionnaireScore.score;
@@ -104,20 +104,20 @@ const actions = {
 
       const respondentAnswers = response.data;
 
-      for (const answer of respondentAnswers) {
-        const questionIndex = state.questions.findIndex(
-          (q) => q.id === answer.questionId
+      for (const respondentAnswer of respondentAnswers) {
+        var question = state.questions.find(
+          (question) => question.id === respondentAnswer.questionId
         );
 
-        if (questionIndex !== -1) {
-          const answerIndex = state.questions[questionIndex].answers.findIndex(
-            (a) => a.id === answer.answerId
+        if (question) {
+          var questionId = question.id;
+
+          var answer = question.answers.find(
+            (answer) => answer.id === respondentAnswer.answerId
           );
 
-          if (answerIndex !== -1) {
-            state.responses[questionIndex].selectedAnswers.push(
-              state.questions[questionIndex].answers[answerIndex]
-            );
+          if (answer) {
+            commit("addSelectedAnswer", { questionId, answer });
           }
         }
       }
@@ -127,18 +127,18 @@ const actions = {
       console.error("Error fetching respondent answers:", error);
     }
   },
-  async updateSelectedAnswers({ commit, state }, { questionIndex, answer }) {
-    const isSelected = state.responses[questionIndex].selectedAnswers.includes(answer);
+  async updateSelectedAnswers({ commit, state }, { questionId, answer }) {
+    const isSelected = state.responses[questionId].selectedAnswers.includes(answer);
 
     if (isSelected) {
-      commit("removeSelectedAnswer", { questionIndex, answer });
+      commit("removeSelectedAnswer", { questionId, answer });
     } else {
-      commit("addSelectedAnswer", { questionIndex, answer });
+      commit("addSelectedAnswer", { questionId, answer });
     }
   },
-  async clearAndUpdateSelectedAnswers({ dispatch, commit }, { questionIndex, answer }) {
-    commit("clearSelectedAnswers", { questionIndex });
-    await dispatch("updateSelectedAnswers", { questionIndex, answer });
+  async clearAndUpdateSelectedAnswers({ dispatch, commit }, { questionId, answer }) {
+    commit("clearSelectedAnswers", { questionId });
+    await dispatch("updateSelectedAnswers", { questionId, answer });
   },
   async submitQuestionAnswers({ commit, state }, {questionId, selectedAnswerIds}) {
     const requestBody = {

@@ -27,8 +27,8 @@
               (don't forget to submit all your answers)
             </p>
             <v-card
-              v-for="(question, questionIndex) in questions"
-              :key="questionIndex"
+              v-for="question in questions"
+              :key="question.id"
               class="ma-5"
             >
               <v-card-title class="text-subtitle-1" style="word-break: keep-all;">
@@ -39,13 +39,13 @@
               </v-card-subtitle>
               <v-list v-if="question.comment">
                 <v-list-item
-                  v-for="(answer, answerIndex) in question.answers"
-                  :key="answerIndex"
+                  v-for="answer in question.answers"
+                  :key="answer.id"
                 >
                   <v-list-item-action>
                     <v-checkbox
-                      :value="isSelected(questionIndex, answer)"
-                      @change="updateSelectedAnswers({questionIndex, answer})"
+                      :value="isSelected(question.id, answer)"
+                      @change="updateSelectedAnswers({questionId: question.id, answer})"
                     ></v-checkbox>
                   </v-list-item-action>
                   <v-list-item-content>
@@ -55,14 +55,14 @@
               </v-list>
               <v-list v-else>
                 <v-radio-group 
-                :value="selectedAnswerId(questionIndex)"> 
+                :value="selectedAnswerId(question.id)"> 
                   <v-list-item
-                    v-for="(answer, answerIndex) in question.answers"
-                    :key="answerIndex">
+                    v-for="answer in question.answers"
+                    :key="answer.id">
                     <v-list-item-action>
                       <v-radio
                       :value="answer.id"
-                      @change="clearAndUpdateSelectedAnswers({questionIndex, answer})"
+                      @change="clearAndUpdateSelectedAnswers({questionId: question.id, answer})"
                       ></v-radio>
                     </v-list-item-action>
                     <v-list-item-content>
@@ -72,7 +72,7 @@
                 </v-radio-group>
               </v-list>
               <v-card-actions>
-                <v-btn color="secondary" @click="submitQuestion(questionIndex)">Submit</v-btn>
+                <v-btn color="secondary" @click="submitQuestion(question.id)">Submit</v-btn>
               </v-card-actions>
             </v-card>
           </v-card-text>
@@ -81,7 +81,7 @@
             <v-spacer></v-spacer>
             <v-avatar
               v-if="questionnaireScore.normalizedScore !== null"
-              class="font-weight-bold text-decoration-underline white--text"
+              class="font-weight-bold text-decoration-underline white--text elevation-12"
               :color="getScoreAvatarColor(questionnaireScore.normalizedScore)"
               size="56"
             >
@@ -128,21 +128,21 @@ export default {
       "submitQuestionAnswers",
       "finishQuestionnaire",
     ]),
-    selectedAnswerId(questionIndex) {
-      if (this.responses[questionIndex].selectedAnswers.length > 0) {
-        return this.responses[questionIndex].selectedAnswers[0].id;
+    selectedAnswerId(questionId) {
+      if (this.responses[questionId].selectedAnswers.length > 0) {
+        return this.responses[questionId].selectedAnswers[0].id;
       }
       else {
         return null;
       }
     },
-    isSelected(questionIndex, answer) {
-      return this.responses[questionIndex].selectedAnswers.includes(answer);
+    isSelected(questionId, answer) {
+      if (this.responses[questionId] != undefined) {
+        return this.responses[questionId].selectedAnswers.includes(answer);
+      }
     },
-    async submitQuestion(questionIndex) {
-      const selectedAnswers = this.responses[questionIndex].selectedAnswers;
-
-      const questionId = this.questions[questionIndex].id;
+    async submitQuestion(questionId) {
+      const selectedAnswers = this.responses[questionId].selectedAnswers;
       const selectedAnswerIds = selectedAnswers.map((answer) => answer.id);
 
       this.submitQuestionAnswers({ questionId, selectedAnswerIds });
