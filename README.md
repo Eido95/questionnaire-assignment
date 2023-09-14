@@ -15,7 +15,6 @@ Author: Eido Askayo
 4. Deploy service:
     1. `kubectl apply -f deployment-service.yaml`
     2. `kubectl get -f deployment-service.yaml` - Wait for it to be `READY 3/3` (takes ~20s)
-    3. The service will automatically populate initial database records
 5. Deploy UI:
     1. `kubectl apply -f deployment-ui.yaml`
     2. `kubectl get -f deployment-ui.yaml` - Wait for it to be `READY 1/1` (takes ~10s)
