@@ -6,8 +6,8 @@ Author: Eido Askayo
 
 ### Cluster Setup and Deployment
 
-1. `minikube start -p minikube-01`
-2. `kubectl config current-context` - See `minikube-01` (or use your favorite Kubernetes cluster)
+1. `minikube start -p minikube-01` (or use your favorite Kubernetes cluster)
+2. `kubectl config current-context` - See `minikube-01`
 3. Deploy database:
     1. `kubectl apply -f pv-mysql.yaml`
     2. `kubectl apply -f deployment-mysql.yaml`
