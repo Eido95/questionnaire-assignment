@@ -8,7 +8,7 @@
           contain
           height="100"
         />
-        <v-card class="mx-auto mt-10" max-width="540">
+        <v-card class="mx-auto mt-10" max-width="600">
           <v-card-title class="text-h2">Questionnaire</v-card-title>
           <v-card-subtitle class="text-h5"
             >Respondents > {{ respondentName }}</v-card-subtitle
@@ -26,8 +26,19 @@
               Click "Finish" button below to see your quetionnaire score </br> 
               (don't forget to submit all your answers)
             </p>
+            <v-row>
+              <v-col>
+                <v-select 
+                class="mx-auto"
+                v-model="filter"
+                :items="filterOptions"
+                label="Filter"
+                ></v-select>
+              </v-col>
+              <v-spacer></v-spacer>
+            </v-row>
             <v-card
-              v-for="question in questions"
+              v-for="question in filteredQuestions"
               :key="question.id"
               class="ma-5"
             >
@@ -99,7 +110,14 @@ import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
-    return {};
+    return {
+      filter: 'all',
+      filterOptions: [
+        { text: 'All', value: 'all' },
+        { text: 'Answered', value: 'answered' },
+        { text: 'Unanswered', value: 'unanswered' },
+      ],
+    };
   },
   computed: {
     ...mapState("questionnaire", [
@@ -110,6 +128,23 @@ export default {
       "respondentName",
       "questionnaireScore",
     ]),
+    filteredQuestions() {
+      if (this.filter === 'all') {
+        return this.questions;
+      } else {
+        return this.questions.filter(question => { 
+          const questionId = question.id;
+          var response = this.responses.find((response) => (response.id == questionId));
+          const isAnswered = response && response.selectedAnswers.length > 0;
+
+          if (this.filter === 'answered') {
+            return isAnswered;
+          } else {
+            return !isAnswered
+          }
+        });
+      }
+    },
   },
   methods: {
     ...mapMutations("questionnaire", [
@@ -129,20 +164,26 @@ export default {
       "finishQuestionnaire",
     ]),
     selectedAnswerId(questionId) {
-      if (this.responses[questionId].selectedAnswers.length > 0) {
-        return this.responses[questionId].selectedAnswers[0].id;
+      var response = this.responses.find((response) => (response.id == questionId));
+
+      if (response.selectedAnswers.length > 0) {
+        return response.selectedAnswers[0].id;
       }
       else {
         return null;
       }
     },
     isSelected(questionId, answer) {
-      if (this.responses[questionId] != undefined) {
-        return this.responses[questionId].selectedAnswers.includes(answer);
+      var response = this.responses.find((response) => (response.id == questionId));
+
+      if (response != undefined) {
+        return response.selectedAnswers.includes(answer);
       }
     },
     async submitQuestion(questionId) {
-      const selectedAnswers = this.responses[questionId].selectedAnswers;
+      var response = this.responses.find((response) => (response.id == questionId));
+
+      const selectedAnswers = response.selectedAnswers;
       const selectedAnswerIds = selectedAnswers.map((answer) => answer.id);
 
       this.submitQuestionAnswers({ questionId, selectedAnswerIds });

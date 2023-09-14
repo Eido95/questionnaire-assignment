@@ -45,18 +45,28 @@ const mutations = {
     state.respondentAnswers = respondentAnswers;
   },
   addSelectedAnswer(state, { questionId, answer }) {
-    state.responses[questionId].selectedAnswers.push(answer);
+    var response = state.responses.find(
+      (response) => response.id == questionId
+    );
+    response.selectedAnswers.push(answer);
   },
   removeSelectedAnswer(state, { questionId, answer }) {
-    const selectedAnswers = state.responses[questionId].selectedAnswers;
+    var response = state.responses.find(
+      (response) => response.id == questionId
+    );
+
+    const selectedAnswers = response.selectedAnswers;
     const updatedSelectedAnswers = selectedAnswers.filter(
       (selectedAnswer) => selectedAnswer !== answer
     );
 
-    state.responses[questionId].selectedAnswers = updatedSelectedAnswers;
+    response.selectedAnswers = updatedSelectedAnswers;
   },
   clearSelectedAnswers(state, { questionId }) {
-    state.responses[questionId].selectedAnswers = [];
+    var response = state.responses.find(
+      (response) => response.id == questionId
+    );
+    response.selectedAnswes = [];
   },
   setQuestionnaireScore(state, questionnaireScore) {
     state.questionnaireScore.score = questionnaireScore.score;
@@ -88,7 +98,8 @@ const actions = {
 
       const responses = [];
       for (let i = 0; i < questions.length; i++) {
-        responses.push({ selectedAnswers: [] });
+        const question = questions[i];
+        responses.push({ id: question.id, selectedAnswers: [] });
       }
 
       commit("setResponses", responses);
@@ -128,7 +139,11 @@ const actions = {
     }
   },
   async updateSelectedAnswers({ commit, state }, { questionId, answer }) {
-    const isSelected = state.responses[questionId].selectedAnswers.includes(answer);
+    var response = state.responses.find(
+      (response) => response.id == questionId
+    );
+
+    const isSelected = response.selectedAnswers.includes(answer);
 
     if (isSelected) {
       commit("removeSelectedAnswer", { questionId, answer });
