@@ -38,7 +38,8 @@
               <v-spacer></v-spacer>
             </v-row>
             <v-card
-              v-for="question in filteredQuestions"
+              v-for="(question, questionIndex) in filteredQuestions"
+              :index="questionIndex"
               :key="question.id"
               class="ma-5"
             >
@@ -50,14 +51,16 @@
               </v-card-subtitle>
               <v-list v-if="question.comment">
                 <v-list-item
-                  v-for="answer in question.answers"
+                  v-for="(answer, answerIndex) in question.answers"
+                  :index="answerIndex"
                   :key="answer.id"
                 >
                   <v-list-item-action>
-                    <v-checkbox
+                    <v-simple-checkbox
                       :value="isSelected(question.id, answer)"
-                      @change="updateSelectedAnswers({questionId: question.id, answer})"
-                    ></v-checkbox>
+                      @click="updateSelectedAnswers({questionId: question.id, answer})"
+                      color="primary"
+                    ></v-simple-checkbox>
                   </v-list-item-action>
                   <v-list-item-content>
                     {{ answer.text }}
@@ -68,12 +71,13 @@
                 <v-radio-group 
                 :value="selectedAnswerId(question.id)"> 
                   <v-list-item
-                    v-for="answer in question.answers"
+                    v-for="(answer, answerIndex) in question.answers"
+                    :index="answerIndex"
                     :key="answer.id">
                     <v-list-item-action>
                       <v-radio
                       :value="answer.id"
-                      @change="clearAndUpdateSelectedAnswers({questionId: question.id, answer})"
+                      @click="clearAndUpdateSelectedAnswers({questionId: question.id, answer})"
                       ></v-radio>
                     </v-list-item-action>
                     <v-list-item-content>
