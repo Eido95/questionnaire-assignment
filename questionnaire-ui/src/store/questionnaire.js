@@ -66,7 +66,7 @@ const mutations = {
     var response = state.responses.find(
       (response) => response.id == questionId
     );
-    response.selectedAnswes = [];
+    response.selectedAnswers = [];
   },
   setQuestionnaireScore(state, questionnaireScore) {
     state.questionnaireScore.score = questionnaireScore.score;
@@ -139,6 +139,7 @@ const actions = {
     }
   },
   async updateSelectedAnswers({ commit, state }, { questionId, answer }) {
+    debugger;
     var response = state.responses.find(
       (response) => response.id == questionId
     );
@@ -152,6 +153,7 @@ const actions = {
     }
   },
   async clearAndUpdateSelectedAnswers({ dispatch, commit }, { questionId, answer }) {
+    debugger;
     commit("clearSelectedAnswers", { questionId });
     await dispatch("updateSelectedAnswers", { questionId, answer });
   },
