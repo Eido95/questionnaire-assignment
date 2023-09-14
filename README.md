@@ -6,8 +6,8 @@ Author: Eido Askayo
 
 ### Cluster Setup and Deployment
 
-1. `minikube start -p minikube-1`
-2. `kubectl config current-context` - Make sure you use `minikube-1` Kubernetes cluster
+1. `minikube start -p minikube-01`
+2. `kubectl config current-context` - See `minikube-01` (or use your favorite Kubernetes cluster)
 3. Deploy database
     1. `kubectl apply -f pv-mysql.yaml`
     2. `kubectl apply -f deployment-mysql.yaml`
@@ -19,14 +19,14 @@ Author: Eido Askayo
 5. Deploy UI
     1. `kubectl apply -f deployment-ui.yaml`
     2. `kubectl get -f deployment-ui.yaml` - Wait for it to be `READY 1/1` (takes ~10s)
-6. `minikube service --all` - Will open 2 browser tabs:
+6. `minikube -p minikube-01 service --all` - Will open 2 browser tabs:
     1. `http://<service ip>:30000` - Questionnaire UI
     2. `http://<service ip>:30001/swagger` - Questionnaire Service API docs
 
 ### Cluster Teardown
 
-1. `minikube -p minikube-1 stop`
-2. `minikube -p minikube-1 delete`
+1. `minikube -p minikube-01 stop`
+2. `minikube -p minikube-01 delete`
 
 ## Contributing Guidelines
 
