@@ -35,7 +35,13 @@
                 label="Filter"
                 ></v-select>
               </v-col>
-              <v-spacer></v-spacer>
+              <v-col>
+                <v-text-field
+                v-model="searchQuery"
+                label="Search (case insensitive)"
+                clearable
+                ></v-text-field>
+              </v-col>
             </v-row>
             <v-card
               v-for="(question, questionIndex) in filteredQuestions"
@@ -121,6 +127,7 @@ export default {
         { text: 'Answered', value: 'answered' },
         { text: 'Unanswered', value: 'unanswered' },
       ],
+      searchQuery: '',
     };
   },
   computed: {
@@ -133,10 +140,12 @@ export default {
       "questionnaireScore",
     ]),
     filteredQuestions() {
+      var filteredQuestions;
+      
       if (this.filter === 'all') {
-        return this.questions;
+        filteredQuestions = this.questions;
       } else {
-        return this.questions.filter(question => { 
+        filteredQuestions = this.questions.filter(question => { 
           const questionId = question.id;
           var response = this.responses.find((response) => (response.id == questionId));
           const isAnswered = response && response.selectedAnswers.length > 0;
@@ -148,6 +157,16 @@ export default {
           }
         });
       }
+
+      filteredQuestions = filteredQuestions.filter(question => {
+        var questionSearched = question.text.toLowerCase().includes(this.searchQuery.toLowerCase());
+        var answersSearched = question.answers.some(
+          answer => answer.text.toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+
+        return (questionSearched || answersSearched)
+      })
+      return filteredQuestions;
     },
   },
   methods: {
