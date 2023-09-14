@@ -32,7 +32,7 @@ Author: Eido Askayo
 
 ### Database
 
-1. Database: MySQL
+1. Database: MySQL Server
 
 ### Service
 
