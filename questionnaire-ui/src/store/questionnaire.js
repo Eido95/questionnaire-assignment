@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_HOST = "192.168.49.2:30001";
+const API_HOST = "questionnaire-service:81";
 
 const getDefaultState = () => {
   return {
