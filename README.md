@@ -6,7 +6,7 @@ Author: Eido Askayo
 
 ### Cluster Setup and Deployment
 
-1. `minikube start -p minikube-01 --static-ip 192.168.200.200`
+1. `minikube start -p minikube-01`
 2. `kubectl config current-context` - See `minikube-01`
 3. Deploy database:
     1. `kubectl apply -f pv-mysql.yaml`
@@ -15,12 +15,13 @@ Author: Eido Askayo
 4. Deploy service:
     1. `kubectl apply -f deployment-service.yaml`
     2. `kubectl get -f deployment-service.yaml` - Wait for it to be `READY 3/3` (takes ~20s)
-5. Deploy UI:
-    1. `kubectl apply -f deployment-ui.yaml`
-    2. `kubectl get -f deployment-ui.yaml` - Wait for it to be `READY 1/1` (takes ~10s)
-6. `minikube -p minikube-01 service --all` - Will open 2 browser tabs:
-    1. `http://192.168.200.200:30000` - Questionnaire UI
-    2. `http://192.168.200.200:30001/swagger` - Questionnaire Service API docs
+5. `minikube -p minikube-01 service questionnaire-service-api` - Will open a browser tab on `http://<service-api:port>`:
+    1. Go to `http://<service-api:port>/swagger` - Questionnaire Service API docs
+6. Run UI:
+    1. Go to `questionnaire-ui` directory
+    2. In `.env.development` change `VUE_APP_API_HOST` value to `<service-api:port>` actual value
+    3. `npm install`
+    4. `npm run serve`
 
 ### Cluster Teardown
 
