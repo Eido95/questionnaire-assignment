@@ -50,7 +50,7 @@ Author: Eido Askayo
 
 1. IDE: Visual Studio Code
 2. Open project by selecting `questionnaire-ui` directory
-2. Modify `questionnaire.js` according to your development environment
+2. Modify `.env.development` according to your development environment:
     1. API host (Questionnaire Service) address
 3. Run `npm install` in terminal
 4. Run `npm run serve` in terminal
